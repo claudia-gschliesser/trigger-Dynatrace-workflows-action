@@ -93,9 +93,6 @@ export const generateBearerToken = async (
 };
 
 export const triggerWorkflow = async (inputs: InputProps, accessToken: string): Promise<void> => {
-  const inputParams = inputs.inputVariables ?? {};
-  const params = inputs.params ?? {};
-
   const request = await fetch(
     `https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
     {
@@ -104,8 +101,8 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        input: inputParams,
-        params: params,
+        input: JSON.parse(inputs.inputVariables ?? ''),
+        params: JSON.parse(inputs.params ?? ''),
         uniqueQualifier: inputs.uniqueQualifier ?? '',
       }),
       method: 'POST',

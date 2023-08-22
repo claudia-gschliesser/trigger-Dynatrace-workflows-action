@@ -2952,16 +2952,14 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
     };
 };
 const triggerWorkflow = async (inputs, accessToken) => {
-    const inputParams = inputs.inputVariables ?? {};
-    const params = inputs.params ?? {};
     const request = await fetch(`https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`, {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            input: inputParams,
-            params: params,
+            input: JSON.parse(inputs.inputVariables ?? ''),
+            params: JSON.parse(inputs.params ?? ''),
             uniqueQualifier: inputs.uniqueQualifier ?? '',
         }),
         method: 'POST',
