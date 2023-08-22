@@ -33,5 +33,5 @@ outputs:
     description: 'Response received from the API'
 
 runs:
-  using: 'node18'
+  using: 'node20'
   main: 'dist/index.js'
