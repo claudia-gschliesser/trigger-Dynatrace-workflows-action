@@ -16,18 +16,10 @@ inputs:
   workflow_id:
     description: ''
     required: true
-  input_variables:
-    description: 'Inputs used for Dynatrace actions'
+  payload:
+    description: 'Inputs used for Dynatrace API'
     required: false
-    default: '{}'
-  params:
-    description: 'Params used for Dynatrace actions'
-    required: false
-    default: '{}'
-  unique_qualifier:
-    description: 'Used for Dynatrace actions'
-    required: false
-    default: ''
+    default: '{"input": {}, "params": {}, "uniqueQualifier: ""}'
 outputs:
   response_body:
     description: 'Response received from the API'

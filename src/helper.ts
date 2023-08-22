@@ -15,9 +15,7 @@ interface InputProps {
   tenant: string;
   endpoint: string;
   workflowId: string;
-  inputVariables?: string;
-  params?: string;
-  uniqueQualifier?: string;
+  payload?: string;
 }
 
 const getDtEndpoint = (endpoint: string): string => {
@@ -36,9 +34,7 @@ export const getInputs = (): InputProps => {
     tenant: getInput(Inputs.tenant, { trimWhitespace: false }),
     endpoint: getInput(Inputs.endpoint, { trimWhitespace: false }),
     workflowId: getInput(Inputs.workflowId, { trimWhitespace: false }),
-    inputVariables: getInput(Inputs.inputVariables, { trimWhitespace: false }),
-    params: getInput(Inputs.params, { trimWhitespace: false }),
-    uniqueQualifier: getInput(Inputs.uniqueQualifier, { trimWhitespace: false }),
+    payload: getInput(Inputs.payload, { trimWhitespace: false }),
   };
 };
 
@@ -100,11 +96,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        input: JSON.parse(inputs.inputVariables ?? ''),
-        params: JSON.parse(inputs.params ?? ''),
-        uniqueQualifier: inputs.uniqueQualifier ?? '',
-      }),
+      body: JSON.stringify(inputs.payload),
       method: 'POST',
     },
   );

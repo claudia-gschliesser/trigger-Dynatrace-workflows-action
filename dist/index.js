@@ -2876,9 +2876,7 @@ var Inputs;
     Inputs["tenant"] = "tenant";
     Inputs["endpoint"] = "endpoint";
     Inputs["workflowId"] = "workflow_id";
-    Inputs["inputVariables"] = "input_variables";
-    Inputs["params"] = "params";
-    Inputs["uniqueQualifier"] = "unique_qualifier";
+    Inputs["payload"] = "payload";
 })(Inputs || (Inputs = {}));
 var Outputs;
 (function (Outputs) {
@@ -2905,9 +2903,7 @@ const getInputs = () => {
         tenant: (0,core.getInput)(Inputs.tenant, { trimWhitespace: false }),
         endpoint: (0,core.getInput)(Inputs.endpoint, { trimWhitespace: false }),
         workflowId: (0,core.getInput)(Inputs.workflowId, { trimWhitespace: false }),
-        inputVariables: (0,core.getInput)(Inputs.inputVariables, { trimWhitespace: false }),
-        params: (0,core.getInput)(Inputs.params, { trimWhitespace: false }),
-        uniqueQualifier: (0,core.getInput)(Inputs.uniqueQualifier, { trimWhitespace: false }),
+        payload: (0,core.getInput)(Inputs.payload, { trimWhitespace: false }),
     };
 };
 const validateInputs = (inputs) => {
@@ -2957,11 +2953,7 @@ const triggerWorkflow = async (inputs, accessToken) => {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            input: JSON.parse(inputs.inputVariables ?? ''),
-            params: JSON.parse(inputs.params ?? ''),
-            uniqueQualifier: inputs.uniqueQualifier ?? '',
-        }),
+        body: JSON.stringify(inputs.payload),
         method: 'POST',
     });
     const response = await request.json();

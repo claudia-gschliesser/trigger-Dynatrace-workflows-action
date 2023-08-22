@@ -4,9 +4,7 @@ export enum Inputs {
   tenant = 'tenant',
   endpoint = 'endpoint',
   workflowId = 'workflow_id',
-  inputVariables = 'input_variables',
-  params = 'params',
-  uniqueQualifier = 'unique_qualifier',
+  payload = 'payload',
 }
 
 export enum Outputs {
