@@ -2944,7 +2944,6 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
     if (!request.ok) {
         throw new Error(JSON.stringify(response));
     }
-    console.log(`token: ${response.access_token}`);
     return {
         scope: response.scope,
         token_type: response.token_type,
@@ -2959,8 +2958,8 @@ const triggerWorkflow = async (inputs, accessToken) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            input: JSON.parse(inputs.inputVariables) ?? {},
-            params: JSON.parse(inputs.params) ?? {},
+            input: JSON.parse(JSON.stringify(inputs.inputVariables)) ?? {},
+            params: JSON.parse(JSON.stringify(inputs.params)) ?? {},
             uniqueQualifier: inputs.uniqueQualifier ?? '',
         }),
         method: 'POST',
