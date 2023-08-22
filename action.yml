@@ -1,0 +1,37 @@
+name: 'trigger-Dynatrace-action'
+description: 'Trigger a Dynatrace Workflow'
+inputs:
+  client_id:
+    description: 'ID of client'
+    required: true
+  client_secret:
+    description: 'Secret of client'
+    required: true
+  tenant:
+    description: ''
+    required: true
+  endpoint:
+    description: ''
+    default: 'https://sso.dynatrace.com'
+  workflow_id:
+    description: ''
+    required: true
+  input_variables:
+    description: 'Inputs used for Dynatrace actions'
+    required: false
+    default: '{}'
+  params:
+    description: 'Params used for Dynatrace actions'
+    required: false
+    default: '{}'
+  unique_qualifier:
+    description: 'Used for Dynatrace actions'
+    required: false
+    default: ''
+outputs:
+  response_body:
+    description: 'Response received from the API'
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
