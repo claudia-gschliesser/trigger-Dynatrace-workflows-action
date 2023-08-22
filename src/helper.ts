@@ -15,7 +15,7 @@ interface InputProps {
   tenant: string;
   endpoint: string;
   workflowId: string;
-  payload?: string[];
+  payload?: string;
 }
 
 const getDtEndpoint = (endpoint: string): string => {
@@ -34,7 +34,7 @@ export const getInputs = (): InputProps => {
     tenant: getInput(Inputs.tenant, { trimWhitespace: false }),
     endpoint: getInput(Inputs.endpoint, { trimWhitespace: false }),
     workflowId: getInput(Inputs.workflowId, { trimWhitespace: false }),
-    payload: getMultilineInput(Inputs.payload),
+    payload: getInput(Inputs.payload),
   };
 };
 
@@ -96,7 +96,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(JSON.parse(JSON.stringify(inputs.payload!.join(' ')))),
+      body: inputs.payload,
       method: 'POST',
     },
   );
@@ -104,9 +104,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
   if (!request.ok) {
     throw new Error(
       `Triggering workflow error: ${JSON.stringify(response)}\n
-      payload: ${inputs.payload!.join(' ')}\n
-      payload stringified: ${JSON.stringify(inputs.payload!.join(' '))}\n
-      payload parsed: ${JSON.parse(JSON.stringify(inputs.payload!.join(' ')))}`,
+      payload: ${inputs.payload}`,
     );
   }
   setOutput(Outputs.responseBody, response);
