@@ -2952,7 +2952,7 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
     };
 };
 const triggerWorkflow = async (inputs, accessToken) => {
-    const request = await fetch(`https://${inputs.tenant}.${inputs.endpoint}./platform/automation/v1/workflows/${inputs.workflowId}/run`, {
+    const request = await fetch(`https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
