@@ -78,11 +78,12 @@ export const generateBearerToken = async (
     method: 'POST',
   });
 
+  const response = await request.json();
+
   if (!request.ok) {
-    throw new Error(JSON.stringify(request));
+    throw new Error(JSON.stringify(response));
   }
 
-  const response = await request.json();
   console.log(`token: ${response.access_token}`);
   return {
     scope: response.scope,
@@ -101,24 +102,16 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        input: inputs.inputVariables ?? {},
-        params: inputs.params ?? {},
+        input: JSON.parse(inputs.inputVariables as string) ?? {},
+        params: JSON.parse(inputs.params as string) ?? {},
         uniqueQualifier: inputs.uniqueQualifier ?? '',
       }),
       method: 'POST',
     },
   );
+  const response = await request.json();
   if (!request.ok) {
-    const response = await request.json();
-    throw new Error(
-      `Response body: ${JSON.stringify(response)}; status: ${request.status}; text: ${
-        request.statusText
-      }\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(
-        inputs.params,
-      )}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${
-        inputs.workflowId
-      }/run\nendpoint: ${inputs.endpoint}\ninputs: ${inputs.inputVariables}`,
-    );
+    throw new Error(JSON.stringify(response));
   }
-  setOutput(Outputs.responseBody, await request.json());
+  setOutput(Outputs.responseBody, response);
 };

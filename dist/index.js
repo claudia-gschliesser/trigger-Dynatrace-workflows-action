@@ -2940,10 +2940,10 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
         }),
         method: 'POST',
     });
-    if (!request.ok) {
-        throw new Error(JSON.stringify(request));
-    }
     const response = await request.json();
+    if (!request.ok) {
+        throw new Error(JSON.stringify(response));
+    }
     console.log(`token: ${response.access_token}`);
     return {
         scope: response.scope,
@@ -2959,17 +2959,17 @@ const triggerWorkflow = async (inputs, accessToken) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            input: inputs.inputVariables ?? {},
-            params: inputs.params ?? {},
+            input: JSON.parse(inputs.inputVariables) ?? {},
+            params: JSON.parse(inputs.params) ?? {},
             uniqueQualifier: inputs.uniqueQualifier ?? '',
         }),
         method: 'POST',
     });
+    const response = await request.json();
     if (!request.ok) {
-        const response = await request.json();
-        throw new Error(`Response body: ${JSON.stringify(response)}; status: ${request.status}; text: ${request.statusText}\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(inputs.params)}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run\nendpoint: ${inputs.endpoint}\ninputs: ${inputs.inputVariables}`);
+        throw new Error(JSON.stringify(response));
     }
-    (0,core.setOutput)(Outputs.responseBody, await request.json());
+    (0,core.setOutput)(Outputs.responseBody, response);
 };
 //# sourceMappingURL=helper.js.map
 ;// CONCATENATED MODULE: ./lib/index.js
