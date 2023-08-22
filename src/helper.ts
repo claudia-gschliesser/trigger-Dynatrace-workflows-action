@@ -81,7 +81,7 @@ export const generateBearerToken = async (
   const response = await request.json();
 
   if (!request.ok) {
-    throw new Error(JSON.stringify(response));
+    throw new Error(`Get bearer token error: ${JSON.stringify(response)}`);
   }
 
   return {
@@ -93,6 +93,9 @@ export const generateBearerToken = async (
 };
 
 export const triggerWorkflow = async (inputs: InputProps, accessToken: string): Promise<void> => {
+  const inputParams = inputs.inputVariables ?? {};
+  const params = inputs.params ?? {};
+
   const request = await fetch(
     `https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
     {
@@ -101,8 +104,12 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        input: JSON.parse(JSON.stringify(inputs.inputVariables)) ?? {},
-        params: JSON.parse(JSON.stringify(inputs.params)) ?? {},
+        input: {
+          inputParams,
+        },
+        params: {
+          params,
+        },
         uniqueQualifier: inputs.uniqueQualifier ?? '',
       }),
       method: 'POST',
@@ -110,7 +117,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
   );
   const response = await request.json();
   if (!request.ok) {
-    throw new Error(JSON.stringify(response));
+    throw new Error(`Triggering workflow error: ${JSON.stringify(response)}`);
   }
   setOutput(Outputs.responseBody, response);
 };

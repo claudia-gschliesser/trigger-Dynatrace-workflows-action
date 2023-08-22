@@ -2942,7 +2942,7 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
     });
     const response = await request.json();
     if (!request.ok) {
-        throw new Error(JSON.stringify(response));
+        throw new Error(`Get bearer token error: ${JSON.stringify(response)}`);
     }
     return {
         scope: response.scope,
@@ -2952,21 +2952,27 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
     };
 };
 const triggerWorkflow = async (inputs, accessToken) => {
+    const inputParams = inputs.inputVariables ?? {};
+    const params = inputs.params ?? {};
     const request = await fetch(`https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`, {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            input: JSON.parse(JSON.stringify(inputs.inputVariables)) ?? {},
-            params: JSON.parse(JSON.stringify(inputs.params)) ?? {},
+            input: {
+                inputParams,
+            },
+            params: {
+                params,
+            },
             uniqueQualifier: inputs.uniqueQualifier ?? '',
         }),
         method: 'POST',
     });
     const response = await request.json();
     if (!request.ok) {
-        throw new Error(JSON.stringify(response));
+        throw new Error(`Triggering workflow error: ${JSON.stringify(response)}`);
     }
     (0,core.setOutput)(Outputs.responseBody, response);
 };
