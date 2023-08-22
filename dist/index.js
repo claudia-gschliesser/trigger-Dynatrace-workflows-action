@@ -2955,17 +2955,18 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
 const triggerWorkflow = async (inputs, accessToken) => {
     const request = await fetch(`https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`, {
         headers: {
-            Authorization: `Bearer ${accessToken}`,
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            input: JSON.parse(JSON.stringify(inputs.inputVariables)) ?? {},
-            params: JSON.parse(JSON.stringify(inputs.params)) ?? {},
+            input: inputs.inputVariables ?? {},
+            params: inputs.params ?? {},
             uniqueQualifier: inputs.uniqueQualifier ?? '',
         }),
         method: 'POST',
     });
     if (!request.ok) {
-        throw new Error(`Response body: ${JSON.stringify(request.body)}; status: ${request.status}; text: ${request.statusText}\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(inputs.params)}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run\nendpoint: ${inputs.endpoint}\ninputs: ${inputs.inputVariables}\ntoken: ${accessToken}`);
+        throw new Error(`Response body: ${JSON.stringify(request.body)}; status: ${request.status}; text: ${request.statusText}\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(inputs.params)}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run\nendpoint: ${inputs.endpoint}\ninputs: ${inputs.inputVariables}`);
     }
     (0,core.setOutput)(Outputs.responseBody, await request.json());
 };

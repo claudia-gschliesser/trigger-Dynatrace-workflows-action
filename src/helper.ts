@@ -97,11 +97,12 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
     `https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
     {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        input: JSON.parse(JSON.stringify(inputs.inputVariables)) ?? {},
-        params: JSON.parse(JSON.stringify(inputs.params)) ?? {},
+        input: inputs.inputVariables ?? {},
+        params: inputs.params ?? {},
         uniqueQualifier: inputs.uniqueQualifier ?? '',
       }),
       method: 'POST',
@@ -115,7 +116,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         inputs.params,
       )}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${
         inputs.workflowId
-      }/run\nendpoint: ${inputs.endpoint}\ninputs: ${inputs.inputVariables}\ntoken: ${accessToken}`,
+      }/run\nendpoint: ${inputs.endpoint}\ninputs: ${inputs.inputVariables}`,
     );
   }
   setOutput(Outputs.responseBody, await request.json());
