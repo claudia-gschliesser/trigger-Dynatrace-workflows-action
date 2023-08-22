@@ -83,7 +83,7 @@ export const generateBearerToken = async (
   }
 
   const response = await request.json();
-
+  console.log(`token: ${response.access_token}`);
   return {
     scope: response.scope,
     token_type: response.token_type,
