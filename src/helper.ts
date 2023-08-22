@@ -15,7 +15,7 @@ interface InputProps {
   tenant: string;
   endpoint: string;
   workflowId: string;
-  payload?: string[];
+  payload: string[];
 }
 
 const getDtEndpoint = (endpoint: string): string => {
@@ -89,7 +89,7 @@ export const generateBearerToken = async (
 };
 
 export const triggerWorkflow = async (inputs: InputProps, accessToken: string): Promise<void> => {
-  const payloadString = inputs.payload!.join('\n');
+  const payloadString = inputs.payload.join('\n');
   const payloadObject = JSON.parse(payloadString);
 
   const request = await fetch(
