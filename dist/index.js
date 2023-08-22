@@ -2958,7 +2958,7 @@ const triggerWorkflow = async (inputs, accessToken) => {
     });
     const response = await request.json();
     if (!request.ok) {
-        throw new Error(`Triggering workflow error: ${JSON.stringify(response)}`);
+        throw new Error(`Triggering workflow error: ${JSON.stringify(response)}\npayload: ${inputs.payload}\npayload stringified: ${JSON.stringify(inputs.payload)}\npayload parse-stringified: ${JSON.parse(JSON.stringify(inputs.payload))}`);
     }
     (0,core.setOutput)(Outputs.responseBody, response);
 };
