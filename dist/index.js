@@ -2959,7 +2959,7 @@ const triggerWorkflow = async (inputs, accessToken) => {
     const response = await request.json();
     if (!request.ok) {
         throw new Error(`Triggering workflow error: ${JSON.stringify(response)}\n
-      payload: ${inputs.payload.toLocaleString().replaceAll(',,', ',')}`);
+      payload: ${inputs.payload.join(' ')}`);
     }
     (0,core.setOutput)(Outputs.responseBody, response);
 };
