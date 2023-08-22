@@ -2903,7 +2903,7 @@ const getInputs = () => {
         tenant: (0,core.getInput)(Inputs.tenant, { trimWhitespace: false }),
         endpoint: (0,core.getInput)(Inputs.endpoint, { trimWhitespace: false }),
         workflowId: (0,core.getInput)(Inputs.workflowId, { trimWhitespace: false }),
-        payload: (0,core.getInput)(Inputs.payload, { trimWhitespace: false }),
+        payload: (0,core.getMultilineInput)(Inputs.payload, { trimWhitespace: false }),
     };
 };
 const validateInputs = (inputs) => {
@@ -2953,13 +2953,13 @@ const triggerWorkflow = async (inputs, accessToken) => {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(JSON.parse(inputs.payload)),
+        body: JSON.stringify({}),
         method: 'POST',
     });
     const response = await request.json();
     if (!request.ok) {
-        throw new Error(`Triggering workflow error: ${JSON.stringify(response)}\npayload: ${inputs.payload}\npayload stringified: ${JSON.stringify(inputs.payload)}\npayload parsed: ${JSON.parse(inputs.payload)},
-      )}`);
+        throw new Error(`Triggering workflow error: ${JSON.stringify(response)}\n
+      payload: ${inputs.payload}`);
     }
     (0,core.setOutput)(Outputs.responseBody, response);
 };
