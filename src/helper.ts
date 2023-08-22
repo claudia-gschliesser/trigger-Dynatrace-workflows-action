@@ -113,7 +113,9 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         request.statusText
       }\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(
         inputs.params,
-      )}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
+      )}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${
+        inputs.workflowId
+      }/run\nendpoint: ${inputs.endpoint}`,
     );
   }
   setOutput(Outputs.responseBody, await request.json());
