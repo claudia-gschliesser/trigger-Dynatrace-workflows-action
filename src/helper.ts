@@ -109,11 +109,11 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
   );
   if (!request.ok) {
     throw new Error(
-      `Response body: ${JSON.stringify(request)}\nBody sent: input: ${JSON.stringify(
-        inputs.inputVariables,
-      )}; params: ${JSON.stringify(inputs.params)}\nURL: https://${inputs.tenant}.${
-        inputs.endpoint
-      }./platform/automation/v1/workflows/${inputs.workflowId}/run`,
+      `Response body: ${JSON.stringify(request.body)}; status: ${request.status}; text: ${
+        request.statusText
+      }\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(
+        inputs.params,
+      )}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
     );
   }
   setOutput(Outputs.responseBody, await request.json());

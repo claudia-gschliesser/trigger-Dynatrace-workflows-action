@@ -2964,7 +2964,7 @@ const triggerWorkflow = async (inputs, accessToken) => {
         method: 'POST',
     });
     if (!request.ok) {
-        throw new Error(`Response body: ${JSON.stringify(request)}\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(inputs.params)}\nURL: https://${inputs.tenant}.${inputs.endpoint}./platform/automation/v1/workflows/${inputs.workflowId}/run`);
+        throw new Error(`Response body: ${JSON.stringify(request.body)}; status: ${request.status}; text: ${request.statusText}\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(inputs.params)}\nURL: https://${inputs.tenant}.${inputs.endpoint}./platform/automation/v1/workflows/${inputs.workflowId}/run`);
     }
     (0,core.setOutput)(Outputs.responseBody, await request.json());
 };
