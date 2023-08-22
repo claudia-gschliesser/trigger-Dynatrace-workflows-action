@@ -34,7 +34,7 @@ export const getInputs = (): InputProps => {
     tenant: getInput(Inputs.tenant, { trimWhitespace: false }),
     endpoint: getInput(Inputs.endpoint, { trimWhitespace: false }),
     workflowId: getInput(Inputs.workflowId, { trimWhitespace: false }),
-    payload: getMultilineInput(Inputs.payload, { trimWhitespace: false }),
+    payload: getMultilineInput(Inputs.payload),
   };
 };
 
@@ -104,7 +104,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
   if (!request.ok) {
     throw new Error(
       `Triggering workflow error: ${JSON.stringify(response)}\n
-      payload: ${inputs.payload!.join(' ')}`,
+      payload: ${JSON.parse(inputs.payload!.join(' '))}`,
     );
   }
   setOutput(Outputs.responseBody, response);
