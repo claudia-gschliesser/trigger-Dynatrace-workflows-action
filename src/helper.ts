@@ -115,7 +115,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         inputs.params,
       )}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${
         inputs.workflowId
-      }/run\nendpoint: ${inputs.endpoint}`,
+      }/run\nendpoint: ${inputs.endpoint}\ninputs: ${inputs.inputVariables}`,
     );
   }
   setOutput(Outputs.responseBody, await request.json());
