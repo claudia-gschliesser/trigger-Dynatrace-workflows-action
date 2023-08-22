@@ -96,7 +96,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ fail: true }),
+      body: inputs.payload!.join(' '),
       method: 'POST',
     },
   );

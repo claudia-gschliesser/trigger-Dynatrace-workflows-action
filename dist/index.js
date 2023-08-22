@@ -2953,7 +2953,7 @@ const triggerWorkflow = async (inputs, accessToken) => {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fail: true }),
+        body: inputs.payload.join(' '),
         method: 'POST',
     });
     const response = await request.json();
