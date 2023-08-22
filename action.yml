@@ -19,7 +19,12 @@ inputs:
   payload:
     description: 'Inputs used for Dynatrace API'
     required: false
-    default: '{"input": {}, "params": {}, "uniqueQualifier: ""}'
+    default: |
+      {
+        "input": {},
+        "params": {},
+        "uniqueQualifier": ""
+      }
 outputs:
   response_body:
     description: 'Response received from the API'
