@@ -100,8 +100,8 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
-        input: inputs.inputVariables ?? {},
-        params: inputs.params ?? {},
+        input: JSON.parse(JSON.stringify(inputs.inputVariables)) ?? {},
+        params: JSON.parse(JSON.stringify(inputs.params)) ?? {},
         uniqueQualifier: inputs.uniqueQualifier ?? '',
       }),
       method: 'POST',
