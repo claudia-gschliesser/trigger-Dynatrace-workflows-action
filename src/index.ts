@@ -6,9 +6,9 @@ const run = async (): Promise<void> => {
     const inputs = getInputs();
     validateInputs(inputs);
     const tokenData = await generateBearerToken(inputs.endpoint, inputs.clientId, inputs.clientSecret);
-    triggerWorkflow(inputs, tokenData.access_token);
+    return await triggerWorkflow(inputs, tokenData.access_token);
   } catch (e) {
-    setFailed(e.message);
+    setFailed(`Error: ${e.message}`);
   }
 };
 
