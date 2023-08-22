@@ -15,7 +15,7 @@ interface InputProps {
   tenant: string;
   endpoint: string;
   workflowId: string;
-  payload?: string;
+  payload?: string[];
 }
 
 const getDtEndpoint = (endpoint: string): string => {
@@ -34,7 +34,7 @@ export const getInputs = (): InputProps => {
     tenant: getInput(Inputs.tenant, { trimWhitespace: false }),
     endpoint: getInput(Inputs.endpoint, { trimWhitespace: false }),
     workflowId: getInput(Inputs.workflowId, { trimWhitespace: false }),
-    payload: getInput(Inputs.payload),
+    payload: getMultilineInput(Inputs.payload),
   };
 };
 
@@ -89,6 +89,9 @@ export const generateBearerToken = async (
 };
 
 export const triggerWorkflow = async (inputs: InputProps, accessToken: string): Promise<void> => {
+  const payloadString = inputs.payload!.join('\n');
+  const payloadObject = JSON.parse(payloadString);
+
   const request = await fetch(
     `https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
     {
@@ -96,7 +99,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: inputs.payload,
+      body: JSON.stringify(payloadObject),
       method: 'POST',
     },
   );
@@ -104,7 +107,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
   if (!request.ok) {
     throw new Error(
       `Triggering workflow error: ${JSON.stringify(response)}\n
-      payload: ${inputs.payload}`,
+      payload: ${JSON.stringify(payloadObject)}`,
     );
   }
   setOutput(Outputs.responseBody, response);

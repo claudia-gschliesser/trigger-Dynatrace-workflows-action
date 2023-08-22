@@ -2903,7 +2903,7 @@ const getInputs = () => {
         tenant: (0,core.getInput)(Inputs.tenant, { trimWhitespace: false }),
         endpoint: (0,core.getInput)(Inputs.endpoint, { trimWhitespace: false }),
         workflowId: (0,core.getInput)(Inputs.workflowId, { trimWhitespace: false }),
-        payload: (0,core.getInput)(Inputs.payload),
+        payload: (0,core.getMultilineInput)(Inputs.payload),
     };
 };
 const validateInputs = (inputs) => {
@@ -2948,18 +2948,20 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
     };
 };
 const triggerWorkflow = async (inputs, accessToken) => {
+    const payloadString = inputs.payload.join('\n');
+    const payloadObject = JSON.parse(payloadString);
     const request = await fetch(`https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`, {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
-        body: inputs.payload,
+        body: JSON.stringify(payloadObject),
         method: 'POST',
     });
     const response = await request.json();
     if (!request.ok) {
         throw new Error(`Triggering workflow error: ${JSON.stringify(response)}\n
-      payload: ${inputs.payload}`);
+      payload: ${JSON.stringify(payloadObject)}`);
     }
     (0,core.setOutput)(Outputs.responseBody, response);
 };
