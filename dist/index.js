@@ -2948,20 +2948,18 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
     };
 };
 const triggerWorkflow = async (inputs, accessToken) => {
-    const payload = inputs.payload;
-    payload.replace(payload.charAt(0), '');
-    payload.replace(payload.charAt(payload.length), '');
     const request = await fetch(`https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`, {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
-        body: inputs.payload,
+        body: JSON.stringify(JSON.parse(inputs.payload)),
         method: 'POST',
     });
     const response = await request.json();
     if (!request.ok) {
-        throw new Error(`Triggering workflow error: ${JSON.stringify(response)}\npayload: ${inputs.payload}\npayload stringified: ${JSON.stringify(inputs.payload)}\npayload parse-stringified: ${JSON.parse(JSON.stringify(inputs.payload))}`);
+        throw new Error(`Triggering workflow error: ${JSON.stringify(response)}\npayload: ${inputs.payload}\npayload stringified: ${JSON.stringify(inputs.payload)}\npayload parsed: ${JSON.parse(inputs.payload)},
+      )}`);
     }
     (0,core.setOutput)(Outputs.responseBody, response);
 };
