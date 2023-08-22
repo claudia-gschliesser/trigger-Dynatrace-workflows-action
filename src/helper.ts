@@ -104,7 +104,7 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
   if (!request.ok) {
     throw new Error(
       `Triggering workflow error: ${JSON.stringify(response)}\n
-      payload: ${inputs.payload}`,
+      payload: ${inputs.payload!.toLocaleString().replaceAll(',,', ',')}`,
     );
   }
   setOutput(Outputs.responseBody, response);
