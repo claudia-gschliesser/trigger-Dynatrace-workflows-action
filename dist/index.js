@@ -2966,7 +2966,8 @@ const triggerWorkflow = async (inputs, accessToken) => {
         method: 'POST',
     });
     if (!request.ok) {
-        throw new Error(`Response body: ${JSON.stringify(request.body)}; status: ${request.status}; text: ${request.statusText}\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(inputs.params)}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run\nendpoint: ${inputs.endpoint}\ninputs: ${inputs.inputVariables}`);
+        const response = await request.json();
+        throw new Error(`Response body: ${JSON.stringify(response)}; status: ${request.status}; text: ${request.statusText}\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(inputs.params)}\nURL: https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run\nendpoint: ${inputs.endpoint}\ninputs: ${inputs.inputVariables}`);
     }
     (0,core.setOutput)(Outputs.responseBody, await request.json());
 };

@@ -109,8 +109,9 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
     },
   );
   if (!request.ok) {
+    const response = await request.json();
     throw new Error(
-      `Response body: ${JSON.stringify(request.body)}; status: ${request.status}; text: ${
+      `Response body: ${JSON.stringify(response)}; status: ${request.status}; text: ${
         request.statusText
       }\nBody sent: input: ${JSON.stringify(inputs.inputVariables)}; params: ${JSON.stringify(
         inputs.params,
