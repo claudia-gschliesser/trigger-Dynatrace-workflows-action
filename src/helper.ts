@@ -89,6 +89,10 @@ export const generateBearerToken = async (
 };
 
 export const triggerWorkflow = async (inputs: InputProps, accessToken: string): Promise<void> => {
+  const payload = inputs.payload;
+  payload!.replace(payload!.charAt(0), '');
+  payload!.replace(payload!.charAt(payload!.length), '');
+
   const request = await fetch(
     `https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
     {
