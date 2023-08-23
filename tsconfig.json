@@ -17,7 +17,7 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "ESNext",
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
-  "exclude": ["node_modules", "dist", "lib"]
+  "exclude": ["node_modules", "dist", "lib", "src/__tests__/**, **.test.**"]
 }

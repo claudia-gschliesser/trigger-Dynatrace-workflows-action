@@ -1,7 +1,7 @@
 import { generateBearerToken, getInputs, triggerWorkflow, validateInputs } from './helper';
 import { setFailed } from '@actions/core';
 
-const run = async (): Promise<void> => {
+export const run = async (): Promise<void> => {
   try {
     const inputs = getInputs();
     validateInputs(inputs);

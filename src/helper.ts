@@ -1,15 +1,15 @@
 import { getInput, getMultilineInput } from '@actions/core';
 import { Inputs, Outputs } from './constants';
-import { setOutput } from '@actions/core';
+import { setOutput, info } from '@actions/core';
 
-interface OAuth2Response {
+export interface OAuth2Response {
   scope: string;
   token_type: string;
   expires_in: number;
   access_token: string;
 }
 
-interface InputProps {
+export interface InputProps {
   clientId: string;
   clientSecret: string;
   tenant: string;
@@ -39,6 +39,8 @@ export const getInputs = (): InputProps => {
 };
 
 export const validateInputs = (inputs: InputProps) => {
+  info(`Validating inputs...`);
+
   if (!inputs.clientId) {
     throw new Error('clientId is undefined.');
   }
@@ -48,12 +50,10 @@ export const validateInputs = (inputs: InputProps) => {
   if (!inputs.tenant) {
     throw new Error('tenant is undefined.');
   }
-  if (!inputs.endpoint) {
-    throw new Error('endpoint is undefined.');
-  }
   if (!inputs.workflowId) {
     throw new Error('workflowId is undefined.');
   }
+  info(`Inputs are valid.`);
 };
 
 export const generateBearerToken = async (
@@ -61,6 +61,7 @@ export const generateBearerToken = async (
   clientId: string,
   clientSecret: string,
 ): Promise<OAuth2Response> => {
+  info(`Generating access token...`);
   const request = await fetch(`${getDtEndpoint(endpoint)}/sso/oauth2/token/`, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -80,6 +81,7 @@ export const generateBearerToken = async (
     throw new Error(`Get bearer token error: ${JSON.stringify(response)}`);
   }
 
+  info(`Access token successfully generated.`);
   return {
     scope: response.scope,
     token_type: response.token_type,
@@ -91,6 +93,7 @@ export const generateBearerToken = async (
 export const triggerWorkflow = async (inputs: InputProps, accessToken: string): Promise<void> => {
   const payloadString = inputs.payload.join('\n');
   const payloadObject = JSON.parse(payloadString);
+  info(`Triggering Dynatrace workflow...`);
 
   const request = await fetch(
     `https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
@@ -110,5 +113,6 @@ export const triggerWorkflow = async (inputs: InputProps, accessToken: string): 
       payload: ${JSON.stringify(payloadObject)}`,
     );
   }
+  info(`Workflow successfully triggered.`);
   setOutput(Outputs.responseBody, response);
 };

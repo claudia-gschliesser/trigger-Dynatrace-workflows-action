@@ -12,6 +12,7 @@ inputs:
     required: true
   endpoint:
     description: ''
+    required: false
     default: 'https://sso.dynatrace.com'
   workflow_id:
     description: ''

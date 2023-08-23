@@ -2843,6 +2843,23 @@ module.exports = require("util");
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -2865,6 +2882,11 @@ var __webpack_exports__ = {};
 "use strict";
 // ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
+
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  "run": () => (/* binding */ run)
+});
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(186);
@@ -2907,6 +2929,7 @@ const getInputs = () => {
     };
 };
 const validateInputs = (inputs) => {
+    (0,core.info)(`Validating inputs...`);
     if (!inputs.clientId) {
         throw new Error('clientId is undefined.');
     }
@@ -2916,14 +2939,13 @@ const validateInputs = (inputs) => {
     if (!inputs.tenant) {
         throw new Error('tenant is undefined.');
     }
-    if (!inputs.endpoint) {
-        throw new Error('endpoint is undefined.');
-    }
     if (!inputs.workflowId) {
         throw new Error('workflowId is undefined.');
     }
+    (0,core.info)(`Inputs are valid.`);
 };
 const generateBearerToken = async (endpoint, clientId, clientSecret) => {
+    (0,core.info)(`Generating access token...`);
     const request = await fetch(`${getDtEndpoint(endpoint)}/sso/oauth2/token/`, {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -2940,6 +2962,7 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
     if (!request.ok) {
         throw new Error(`Get bearer token error: ${JSON.stringify(response)}`);
     }
+    (0,core.info)(`Access token successfully generated.`);
     return {
         scope: response.scope,
         token_type: response.token_type,
@@ -2950,6 +2973,7 @@ const generateBearerToken = async (endpoint, clientId, clientSecret) => {
 const triggerWorkflow = async (inputs, accessToken) => {
     const payloadString = inputs.payload.join('\n');
     const payloadObject = JSON.parse(payloadString);
+    (0,core.info)(`Triggering Dynatrace workflow...`);
     const request = await fetch(`https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`, {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -2963,6 +2987,7 @@ const triggerWorkflow = async (inputs, accessToken) => {
         throw new Error(`Triggering workflow error: ${JSON.stringify(response)}\n
       payload: ${JSON.stringify(payloadObject)}`);
     }
+    (0,core.info)(`Workflow successfully triggered.`);
     (0,core.setOutput)(Outputs.responseBody, response);
 };
 //# sourceMappingURL=helper.js.map
