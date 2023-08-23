@@ -134,7 +134,7 @@ describe('trigger Dynatrace workflows', () => {
       method: 'POST',
     });
   });
-  it('given valid inputs, runs successully', async () => {
+  it('given valid inputs, runs successfully', async () => {
     fetchMock.mockResponses(
       [
         JSON.stringify({ scope: 'some-scope', token_type: 'Bearer', expires_in: 300, access_token: 'jwt-token-1234' }),
