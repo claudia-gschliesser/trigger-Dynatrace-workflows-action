@@ -1,3 +1,4 @@
+import { info } from '@actions/core';
 import { InputProps, getDtEndpoint } from './input-validation';
 
 export interface OAuth2Response {
@@ -15,11 +16,12 @@ interface RequestProps {
 }
 
 export class DynatraceClient {
-  public generateBearerToken = async (
+  private generateBearerToken = async (
     endpoint: string,
     clientId: string,
     clientSecret: string,
   ): Promise<OAuth2Response> => {
+    info('Generating bearer token...');
     const response = await this.makeRequest({
       requestUrl: `${getDtEndpoint(endpoint)}/sso/oauth2/token/`,
       method: 'POST',
@@ -33,7 +35,7 @@ export class DynatraceClient {
         scope: 'automation:workflows:run',
       }),
     });
-
+    info('Bearer token successfully generated.');
     return {
       scope: response.scope,
       token_type: response.token_type,
@@ -42,15 +44,16 @@ export class DynatraceClient {
     };
   };
 
-  public triggerWorkflow = async (inputs: InputProps, accessToken: string): Promise<any> => {
+  public triggerWorkflow = async (inputs: InputProps): Promise<any> => {
     const payloadString = inputs.payload.join('\n');
     const payloadObject = JSON.parse(payloadString);
+    const tokenData = await this.generateBearerToken(inputs.endpoint, inputs.clientId, inputs.clientSecret);
 
     const response = await this.makeRequest({
       requestUrl: `https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        'Authorization': `Bearer ${tokenData.access_token}`,
         'Content-Type': 'application/json',
       },
       jsonBody: JSON.stringify(payloadObject),

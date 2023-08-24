@@ -111,26 +111,16 @@ describe('trigger Dynatrace workflows', () => {
       '}',
     ]);
   });
-  it('given valid inputs, returns OAuth credentials', async () => {
-    fetchMock.mockResponseOnce(
-      JSON.stringify({ scope: 'some-scope', token_type: 'Bearer', expires_in: 300, access_token: 'jwt-token-1234' }),
-      { status: 200 },
-    );
-    const dynatraceClient = new DynatraceClient();
-    const response = await dynatraceClient.generateBearerToken(inputs.endpoint, inputs.clientId, inputs.clientSecret);
-    expect(fetchMock).toHaveBeenCalled();
-    expect(response).toStrictEqual({
-      scope: 'some-scope',
-      token_type: 'Bearer',
-      expires_in: 300,
-      access_token: 'jwt-token-1234',
-    });
-  });
 
   it('given valid bearer token and payload, triggers workflow', async () => {
-    fetchMock.mockResponseOnce(JSON.stringify({ dt_workflow_triggered: true }));
+    fetchMock
+      .mockResponseOnce(
+        JSON.stringify({ scope: 'some-scope', token_type: 'Bearer', expires_in: 300, access_token: 'jwt-token-1234' }),
+        { status: 200 },
+      )
+      .mockResponseOnce(JSON.stringify({ dt_workflow_triggered: true }));
     const dynatraceClient = new DynatraceClient();
-    const response = await dynatraceClient.triggerWorkflow(inputs, 'jwt-token-1234');
+    const response = await dynatraceClient.triggerWorkflow(inputs);
     expect(fetchMock).toHaveBeenCalledWith('https://abc.test.apps.com/platform/automation/v1/workflows/id-235-13/run', {
       body: '{"input":{"test_msg":"hello world"},"params":{},"uniqueQualifier":""}',
       headers: { 'Authorization': 'Bearer jwt-token-1234', 'Content-Type': 'application/json' },

@@ -2930,8 +2930,10 @@ const validateInputs = (inputs) => {
 //# sourceMappingURL=input-validation.js.map
 ;// CONCATENATED MODULE: ./lib/dynatrace-client.js
 
+
 class DynatraceClient {
     generateBearerToken = async (endpoint, clientId, clientSecret) => {
+        (0,core.info)('Generating bearer token...');
         const response = await this.makeRequest({
             requestUrl: `${getDtEndpoint(endpoint)}/sso/oauth2/token/`,
             method: 'POST',
@@ -2945,6 +2947,7 @@ class DynatraceClient {
                 scope: 'automation:workflows:run',
             }),
         });
+        (0,core.info)('Bearer token successfully generated.');
         return {
             scope: response.scope,
             token_type: response.token_type,
@@ -2952,14 +2955,15 @@ class DynatraceClient {
             access_token: response.access_token,
         };
     };
-    triggerWorkflow = async (inputs, accessToken) => {
+    triggerWorkflow = async (inputs) => {
         const payloadString = inputs.payload.join('\n');
         const payloadObject = JSON.parse(payloadString);
+        const tokenData = await this.generateBearerToken(inputs.endpoint, inputs.clientId, inputs.clientSecret);
         const response = await this.makeRequest({
             requestUrl: `https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
+                'Authorization': `Bearer ${tokenData.access_token}`,
                 'Content-Type': 'application/json',
             },
             jsonBody: JSON.stringify(payloadObject),
@@ -2999,11 +3003,8 @@ const run = async () => {
         const inputs = getInputs();
         validateInputs(inputs);
         const dynatraceClient = new DynatraceClient();
-        (0,core.info)(`Generating access token...`);
-        const tokenData = await dynatraceClient.generateBearerToken(inputs.endpoint, inputs.clientId, inputs.clientSecret);
-        (0,core.info)(`Access token successfully generated.`);
         (0,core.info)(`Triggering Dynatrace workflow...`);
-        const responseBody = await dynatraceClient.triggerWorkflow(inputs, tokenData.access_token);
+        const responseBody = await dynatraceClient.triggerWorkflow(inputs);
         (0,core.info)(`Workflow successfully triggered.`);
         (0,core.setOutput)("response_body" /* Outputs.responseBody */, responseBody);
     }

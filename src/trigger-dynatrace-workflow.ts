@@ -10,12 +10,8 @@ export const run = async (): Promise<void> => {
 
     const dynatraceClient = new DynatraceClient();
 
-    info(`Generating access token...`);
-    const tokenData = await dynatraceClient.generateBearerToken(inputs.endpoint, inputs.clientId, inputs.clientSecret);
-    info(`Access token successfully generated.`);
-
     info(`Triggering Dynatrace workflow...`);
-    const responseBody = await dynatraceClient.triggerWorkflow(inputs, tokenData.access_token);
+    const responseBody = await dynatraceClient.triggerWorkflow(inputs);
     info(`Workflow successfully triggered.`);
     setOutput(Outputs.responseBody, responseBody);
   } catch (e) {
