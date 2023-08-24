@@ -2888,18 +2888,9 @@ __nccwpck_require__.d(__webpack_exports__, {
   "run": () => (/* binding */ run)
 });
 
-// NAMESPACE OBJECT: ./lib/constants.js
-var constants_namespaceObject = {};
-__nccwpck_require__.r(constants_namespaceObject);
-
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(186);
-;// CONCATENATED MODULE: ./lib/constants.js
-
-//# sourceMappingURL=constants.js.map
-;// CONCATENATED MODULE: ./lib/helper.js
-
-
+;// CONCATENATED MODULE: ./lib/input-validation.js
 
 const getDtEndpoint = (endpoint) => {
     if (endpoint.includes('dev.apps.dynatracelabs.com')) {
@@ -2912,12 +2903,12 @@ const getDtEndpoint = (endpoint) => {
 };
 const getInputs = () => {
     return {
-        clientId: (0,core.getInput)(constants_namespaceObject.Inputs.clientId, { trimWhitespace: false }),
-        clientSecret: (0,core.getInput)(constants_namespaceObject.Inputs.clientSecret, { trimWhitespace: false }),
-        tenant: (0,core.getInput)(constants_namespaceObject.Inputs.tenant, { trimWhitespace: false }),
-        endpoint: (0,core.getInput)(constants_namespaceObject.Inputs.endpoint, { trimWhitespace: false }),
-        workflowId: (0,core.getInput)(constants_namespaceObject.Inputs.workflowId, { trimWhitespace: false }),
-        payload: (0,core.getMultilineInput)(constants_namespaceObject.Inputs.payload),
+        clientId: (0,core.getInput)("client_id" /* Inputs.clientId */, { trimWhitespace: false }),
+        clientSecret: (0,core.getInput)("client_secret" /* Inputs.clientSecret */, { trimWhitespace: false }),
+        tenant: (0,core.getInput)("tenant" /* Inputs.tenant */, { trimWhitespace: false }),
+        endpoint: (0,core.getInput)("endpoint" /* Inputs.endpoint */, { trimWhitespace: false }),
+        workflowId: (0,core.getInput)("workflow_id" /* Inputs.workflowId */, { trimWhitespace: false }),
+        payload: (0,core.getMultilineInput)("payload" /* Inputs.payload */),
     };
 };
 const validateInputs = (inputs) => {
@@ -2936,69 +2927,92 @@ const validateInputs = (inputs) => {
     }
     (0,core.info)(`Inputs are valid.`);
 };
-const generateBearerToken = async (endpoint, clientId, clientSecret) => {
-    (0,core.info)(`Generating access token...`);
-    const request = await fetch(`${getDtEndpoint(endpoint)}/sso/oauth2/token/`, {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            grant_type: 'client_credentials',
-            client_id: clientId,
-            client_secret: clientSecret,
-            scope: 'automation:workflows:run',
-        }),
-        method: 'POST',
-    });
-    const response = await request.json();
-    if (!request.ok) {
-        throw new Error(`Get bearer token error: ${JSON.stringify(response)}`);
-    }
-    (0,core.info)(`Access token successfully generated.`);
-    return {
-        scope: response.scope,
-        token_type: response.token_type,
-        expires_in: response.expires_in,
-        access_token: response.access_token,
+//# sourceMappingURL=input-validation.js.map
+;// CONCATENATED MODULE: ./lib/dynatrace-client.js
+
+class DynatraceClient {
+    generateBearerToken = async (endpoint, clientId, clientSecret) => {
+        const response = await this.makeRequest({
+            requestUrl: `${getDtEndpoint(endpoint)}/sso/oauth2/token/`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            jsonBody: JSON.stringify({
+                grant_type: 'client_credentials',
+                client_id: clientId,
+                client_secret: clientSecret,
+                scope: 'automation:workflows:run',
+            }),
+        });
+        return {
+            scope: response.scope,
+            token_type: response.token_type,
+            expires_in: response.expires_in,
+            access_token: response.access_token,
+        };
     };
-};
-const triggerWorkflow = async (inputs, accessToken) => {
-    const payloadString = inputs.payload.join('\n');
-    const payloadObject = JSON.parse(payloadString);
-    (0,core.info)(`Triggering Dynatrace workflow...`);
-    const request = await fetch(`https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payloadObject),
-        method: 'POST',
-    });
-    const response = await request.json();
-    if (!request.ok) {
-        throw new Error(`Triggering workflow error: ${JSON.stringify(response)}\n
-      payload: ${JSON.stringify(payloadObject)}`);
-    }
-    (0,core.info)(`Workflow successfully triggered.`);
-    (0,core.setOutput)(constants_namespaceObject.Outputs.responseBody, response);
-};
-//# sourceMappingURL=helper.js.map
-;// CONCATENATED MODULE: ./lib/index.js
+    triggerWorkflow = async (inputs, accessToken) => {
+        const payloadString = inputs.payload.join('\n');
+        const payloadObject = JSON.parse(payloadString);
+        const response = await this.makeRequest({
+            requestUrl: `https://${inputs.tenant}.${inputs.endpoint}/platform/automation/v1/workflows/${inputs.workflowId}/run`,
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            jsonBody: JSON.stringify(payloadObject),
+        });
+        return await response;
+    };
+    makeRequest = async (props) => {
+        let requestBody;
+        if (props.jsonBody === undefined) {
+            requestBody = {
+                method: props.method,
+                headers: props.headers,
+            };
+        }
+        else {
+            requestBody = {
+                method: props.method,
+                headers: props.headers,
+                body: props.jsonBody,
+            };
+        }
+        const request = await fetch(props.requestUrl, requestBody);
+        const response = await request.json();
+        if (!request.ok) {
+            throw new Error(JSON.stringify(response));
+        }
+        return response;
+    };
+}
+//# sourceMappingURL=dynatrace-client.js.map
+;// CONCATENATED MODULE: ./lib/trigger-dynatrace-workflow.js
+
 
 
 const run = async () => {
     try {
         const inputs = getInputs();
         validateInputs(inputs);
-        const tokenData = await generateBearerToken(inputs.endpoint, inputs.clientId, inputs.clientSecret);
-        return await triggerWorkflow(inputs, tokenData.access_token);
+        const dynatraceClient = new DynatraceClient();
+        (0,core.info)(`Generating access token...`);
+        const tokenData = await dynatraceClient.generateBearerToken(inputs.endpoint, inputs.clientId, inputs.clientSecret);
+        (0,core.info)(`Access token successfully generated.`);
+        (0,core.info)(`Triggering Dynatrace workflow...`);
+        const responseBody = await dynatraceClient.triggerWorkflow(inputs, tokenData.access_token);
+        (0,core.info)(`Workflow successfully triggered.`);
+        (0,core.setOutput)("response_body" /* Outputs.responseBody */, responseBody);
     }
     catch (e) {
         (0,core.setFailed)(`Error: ${e.message}`);
     }
 };
 run();
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=trigger-dynatrace-workflow.js.map
 })();
 
 module.exports = __webpack_exports__;
