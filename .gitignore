@@ -5,6 +5,7 @@
 # Compiled output
 /build
 /tmp
+/dist
 
 # Deployment artifact
 /out

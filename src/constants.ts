@@ -1,4 +1,4 @@
-export enum Inputs {
+export const enum Inputs {
   clientId = 'client_id',
   clientSecret = 'client_secret',
   tenant = 'tenant',
@@ -7,6 +7,6 @@ export enum Inputs {
   payload = 'payload',
 }
 
-export enum Outputs {
+export const enum Outputs {
   responseBody = 'response_body',
 }

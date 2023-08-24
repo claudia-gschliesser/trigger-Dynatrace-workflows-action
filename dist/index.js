@@ -2888,22 +2888,14 @@ __nccwpck_require__.d(__webpack_exports__, {
   "run": () => (/* binding */ run)
 });
 
+// NAMESPACE OBJECT: ./lib/constants.js
+var constants_namespaceObject = {};
+__nccwpck_require__.r(constants_namespaceObject);
+
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(186);
 ;// CONCATENATED MODULE: ./lib/constants.js
-var Inputs;
-(function (Inputs) {
-    Inputs["clientId"] = "client_id";
-    Inputs["clientSecret"] = "client_secret";
-    Inputs["tenant"] = "tenant";
-    Inputs["endpoint"] = "endpoint";
-    Inputs["workflowId"] = "workflow_id";
-    Inputs["payload"] = "payload";
-})(Inputs || (Inputs = {}));
-var Outputs;
-(function (Outputs) {
-    Outputs["responseBody"] = "response_body";
-})(Outputs || (Outputs = {}));
+
 //# sourceMappingURL=constants.js.map
 ;// CONCATENATED MODULE: ./lib/helper.js
 
@@ -2920,12 +2912,12 @@ const getDtEndpoint = (endpoint) => {
 };
 const getInputs = () => {
     return {
-        clientId: (0,core.getInput)(Inputs.clientId, { trimWhitespace: false }),
-        clientSecret: (0,core.getInput)(Inputs.clientSecret, { trimWhitespace: false }),
-        tenant: (0,core.getInput)(Inputs.tenant, { trimWhitespace: false }),
-        endpoint: (0,core.getInput)(Inputs.endpoint, { trimWhitespace: false }),
-        workflowId: (0,core.getInput)(Inputs.workflowId, { trimWhitespace: false }),
-        payload: (0,core.getMultilineInput)(Inputs.payload),
+        clientId: (0,core.getInput)(constants_namespaceObject.Inputs.clientId, { trimWhitespace: false }),
+        clientSecret: (0,core.getInput)(constants_namespaceObject.Inputs.clientSecret, { trimWhitespace: false }),
+        tenant: (0,core.getInput)(constants_namespaceObject.Inputs.tenant, { trimWhitespace: false }),
+        endpoint: (0,core.getInput)(constants_namespaceObject.Inputs.endpoint, { trimWhitespace: false }),
+        workflowId: (0,core.getInput)(constants_namespaceObject.Inputs.workflowId, { trimWhitespace: false }),
+        payload: (0,core.getMultilineInput)(constants_namespaceObject.Inputs.payload),
     };
 };
 const validateInputs = (inputs) => {
@@ -2988,7 +2980,7 @@ const triggerWorkflow = async (inputs, accessToken) => {
       payload: ${JSON.stringify(payloadObject)}`);
     }
     (0,core.info)(`Workflow successfully triggered.`);
-    (0,core.setOutput)(Outputs.responseBody, response);
+    (0,core.setOutput)(constants_namespaceObject.Outputs.responseBody, response);
 };
 //# sourceMappingURL=helper.js.map
 ;// CONCATENATED MODULE: ./lib/index.js
