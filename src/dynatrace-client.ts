@@ -11,7 +11,7 @@ interface RequestProps {
   headers: HeadersInit;
   method: string;
   requestUrl: string;
-  jsonBody?: string;
+  jsonBody?: string | URLSearchParams;
 }
 
 export class DynatraceClient {
@@ -26,7 +26,7 @@ export class DynatraceClient {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      jsonBody: JSON.stringify({
+      jsonBody: new URLSearchParams({
         grant_type: 'client_credentials',
         client_id: clientId,
         client_secret: clientSecret,

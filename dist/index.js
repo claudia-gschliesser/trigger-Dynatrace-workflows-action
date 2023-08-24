@@ -2938,7 +2938,7 @@ class DynatraceClient {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            jsonBody: JSON.stringify({
+            jsonBody: new URLSearchParams({
                 grant_type: 'client_credentials',
                 client_id: clientId,
                 client_secret: clientSecret,
